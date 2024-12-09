@@ -11,8 +11,8 @@ type NavItem = {
 const navigationLinks: NavItem[] = [
     { name: "Home", href: "/" },
     { name: "Privacy Policy", href: "/privacy-policy" },
-    { name: "Careers", href: "/careers"},
-    { name: "Contact Us", href: "/contact-us"}
+    { name: "Careers", href: "/careers" },
+    { name: "Contact Us", href: "/contact-us" }
 ];
 
 export function Navbar() {
@@ -54,12 +54,11 @@ export function Navbar() {
     }
 
     return (
-        <header className='flex items-center justify-center h-[75px] w-full z-50 bg-transparent'>
+        <header className='flex items-center justify-center h-[90px] w-full z-50 transparent'>
             <div className="relative flex justify-between items-center max-w-screen-xl w-full px-5 z-50">
                 <Link href="/">
                     <div className="flex items-center cursor-pointer space-x-4">
-                        <img src="/assets/cruxlogIcon.png" alt="CruxLog" className="md:h-12 h-10" />
-                        <p className="font-bold text-2xl md:text-4xl bg-gradient-to-b from-bright-yellow via-[#F34971] to-primary-purple bg-clip-text text-transparent">Jakes Lawn</p>
+                        <img src="/assets/JLLC.png" alt="Jake's Lawn" className="h-[140px]" />
                     </div>
                 </Link>
 
@@ -70,7 +69,7 @@ export function Navbar() {
                             <button
                                 key={item.name}
                                 onClick={item.onClick}
-                                className='py-2 px-4 mr-4 font-semibold text-white  hover:text-secondary transition-colors duration-500 ease-in-out'
+                                className='py-2 px-4 mr-4 font-light text-green-900 hover:text-secondary transition-colors duration-500 ease-in-out'
                             >
                                 {item.name}
                             </button>
@@ -78,11 +77,12 @@ export function Navbar() {
                             <Link
                                 key={item.name}
                                 href={item.href || '#'}
-                                className='py-2 px-4 mr-4 font-semibold text-white text-glow hover:text-secondary transition-colors duration-500 ease-in-out'
+                                className="py-2 px-4 mr-4 font-light text-green-900 text-glow hover:text-secondary hover:font-medium hover:text-green-800 transition-all duration-300 ease-in-out transform hover:scale-100"
                                 onClick={handleLinkClick}
                             >
                                 {item.name}
                             </Link>
+
                         )
                     ))}
                 </nav>

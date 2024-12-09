@@ -1,8 +1,11 @@
+import PageFrame from "@/components/layout/PageFrame";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      
-    </main>
+    <PageFrame showNavbar={true} className="bg-light-green-bg">
+      <div>
+
+      </div>
+    </PageFrame>
   );
 }
