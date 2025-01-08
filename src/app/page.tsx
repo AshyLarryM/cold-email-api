@@ -1,11 +1,8 @@
-import PageFrame from "@/components/layout/PageFrame";
-
 export default function Home() {
-  return (
-    <PageFrame showNavbar={true} className="bg-light-green-bg">
-      <div>
-
-      </div>
-    </PageFrame>
-  );
+	return (
+		<div>
+			<h1 className="bg-red-500 text-xl border border-b-black">Test</h1>
+			Home
+		</div>
+	);
 }
