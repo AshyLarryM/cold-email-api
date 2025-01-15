@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 import path from 'path';
 import { promises as fs } from 'fs';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
     try {
@@ -15,16 +15,16 @@ export async function GET(request: NextRequest) {
         const sheets = google.sheets({ version: 'v4', auth });
 
         const spreadsheetId = '1jJZoNQQPyJjnja84uyPrGcXmNzjWHJ9PghMnJ96ZkGQ';
-        const range = 'Sheet1!A1:D10';
+        const range = 'TestSheet1!A1:D10';
 
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId,
             range,
         });
 
-        return new Response(JSON.stringify(response.data), { status: 200 })
+        return NextResponse.json(response.data, { status: 200 });
     } catch (error) {
         console.error('Error fetching Google Sheet:', error);
-        return new Response(JSON.stringify({ error: error }), { status: 500 });
+        return NextResponse.json(error, { status: 500 });
     }
 }
