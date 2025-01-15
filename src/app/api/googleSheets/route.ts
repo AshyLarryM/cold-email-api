@@ -23,7 +23,45 @@ export async function GET(request: NextRequest) {
             range,
         });
 
-        return NextResponse.json(response.data, { status: 200 });
+        const rows = response.data.values || [];
+        if (rows.length === 0) {
+            console.log('No data found.');
+            return NextResponse.json({ message: 'No data found' }, { status: 200 });
+        }
+
+        // Extract headers and data rows
+        const headers = rows[0]; // Assumes first row contains headers
+        const dataRows = rows.slice(1);
+
+
+        // Loop through rows and send valid rows to SQS
+        for (const row of dataRows) {
+            const data = {
+                company: row[headers.indexOf('Company')],
+                contact: row[headers.indexOf('Contact')],
+                email: row[headers.indexOf('Email')],
+            };
+
+            console.log("Data: ", data);
+
+            // Ensure required fields are present
+            if (data.company && data.contact && data.email) {
+                try {
+                    await sendToQueue(data);
+                } catch (error) {
+                    console.error(`Failed to send row to queue: ${JSON.stringify(data)}`, error);
+                }
+            } else {
+                console.warn(`Skipping invalid row: ${JSON.stringify(row)}`);
+            }
+        }
+        
+
+        return NextResponse.json({
+            message: 'Data processing completed',
+        }, { status: 200 });
+
+
     } catch (error) {
         console.error('Error fetching Google Sheet:', error);
         return NextResponse.json(error, { status: 500 });

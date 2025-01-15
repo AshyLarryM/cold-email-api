@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.726.1",
     "@sendgrid/mail": "^8.1.4",
     "aws-sdk": "^2.1692.0",
     "googleapis": "^144.0.0",

@@ -18,6 +18,8 @@ export async function sendToQueue(message: SQSMessage): Promise<string> {
     if (!queueUrl) {
         throw new Error('SQS_QUEUE_URL environment variable is not defined');
     }
+    console.log('SQS Queue URL:', process.env.SQS_QUEUE_URL);
+
 
     const params: AWS.SQS.SendMessageRequest = {
         QueueUrl: queueUrl,
