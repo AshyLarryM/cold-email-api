@@ -2,6 +2,7 @@ import { google } from 'googleapis';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { NextRequest, NextResponse } from 'next/server';
+import { sendToQueue } from '@/lib/sqs/sendToQueue';
 
 export async function GET(request: NextRequest) {
     try {
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
         const sheets = google.sheets({ version: 'v4', auth });
 
         const spreadsheetId = '1jJZoNQQPyJjnja84uyPrGcXmNzjWHJ9PghMnJ96ZkGQ';
-        const range = 'TestSheet1!A1:D10';
+        const range = 'TestSheet1!A1:p10';
 
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId,
