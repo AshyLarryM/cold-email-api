@@ -12,3 +12,11 @@ export async function fetchMessagesFromQueue(queueUrl: string, maxMessages: numb
     const response = await sqsClient.send(command);
     return response.Messages || [];
 }
+
+export async function deleteMessageFromQueue(queueUrl: string, receiptHandle: string) {
+    const command = new DeleteMessageCommand({
+        QueueUrl: queueUrl,
+        ReceiptHandle: receiptHandle,
+    });
+    await sqsClient.send(command);
+}

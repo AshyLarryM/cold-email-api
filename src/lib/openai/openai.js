@@ -20,3 +20,18 @@ async function generateEmailContent(company, contact) {
 
     return response.data.choices[0]?.text?.trim() || '';
 }
+
+async function processBatch(messages) {
+    for (const message of messages) {
+        const { company, contact, email } = JSON.parse(message.Body);
+
+        // Generate email content
+        const emailContent = await generateEmailContent(company, contact);
+
+        // Send email
+        await sendEmail(email, `Introduction to ${company}`, emailContent);
+
+        // Delete the message from the queue
+        await deleteMessage(message.ReceiptHandle);
+    }
+}
