@@ -3,7 +3,6 @@ import path from 'path';
 import { promises as fs } from 'fs';
 import { NextRequest, NextResponse } from 'next/server';
 import { sendToQueue } from '@/lib/sqs/sendToQueue';
-import { fetchMessagesFromQueue } from '@/lib/sqs/fetchFromQueue';
 
 export async function GET(request: NextRequest) {
     try {
@@ -34,6 +33,8 @@ export async function GET(request: NextRequest) {
         const headers = rows[0]; // Assumes first row contains headers
         const dataRows = rows.slice(1);
 
+        const processedData = [];
+
 
         // Loop through rows and send valid rows to SQS
         for (const row of dataRows) {
@@ -47,6 +48,8 @@ export async function GET(request: NextRequest) {
 
             // Ensure required fields are present
             if (data.company && data.contact && data.email) {
+                processedData.push(data);
+
                 try {
                     await sendToQueue(data);
                 } catch (error) {
@@ -56,21 +59,13 @@ export async function GET(request: NextRequest) {
                 console.warn(`Skipping invalid row: ${JSON.stringify(row)}`);
             }
         }
+        
 
-        const messages = await fetchMessagesFromQueue(process.env.SQS_QUEUE_URL!);
+        return NextResponse.json({
+            message: 'Data processing completed',
+            data: processedData,
+        }, { status: 200 });
 
-        console.log('Fetched Messages:', messages);
-
-        return NextResponse.json(
-            {
-                message: 'Data sent to queue and messages fetched successfully',
-                fetchedMessages: messages.map((msg) => ({
-                    id: msg.MessageId,
-                    body: msg.Body,
-                })),
-            },
-            { status: 200 }
-        );
 
     } catch (error) {
         console.error('Error fetching Google Sheet:', error);
