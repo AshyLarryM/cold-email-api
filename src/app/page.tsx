@@ -11,7 +11,7 @@ export default function Home() {
 		setLoading(true);
 
 		try {
-			const res = await fetch("http://localhost:3000/api/googleSheets", {
+			const res = await fetch("https://cold-email-api.vercel.app/api/googleSheets", {
 				method: "GET",
 			});
 			const data = await res.json();

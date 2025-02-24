@@ -1,22 +1,25 @@
 import { google } from 'googleapis';
-import path from 'path';
-import { promises as fs } from 'fs';
 import { NextRequest, NextResponse } from 'next/server';
 import { sendToQueue } from '@/lib/sqs/sendToQueue';
 
 export async function GET(request: NextRequest) {
     try {
-        const keyFilePath = path.join(process.cwd(), 'cold-email-generator-447123-6a2d2439fccf.json');
-        const keyFile = JSON.parse(await fs.readFile(keyFilePath, 'utf8'));
+        if (!process.env.GOOGLE_SERVICE_ACCOUNT) {
+            throw new Error('Missing GOOGLE_SERVICE_ACCOUNT environment variable');
+        }
+
+        // Parse the service account credentials from environment variable
+        const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
 
         const auth = new google.auth.GoogleAuth({
-            credentials: keyFile,
+            credentials,
             scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
         });
+
         const sheets = google.sheets({ version: 'v4', auth });
 
         const spreadsheetId = '1jJZoNQQPyJjnja84uyPrGcXmNzjWHJ9PghMnJ96ZkGQ';
-        const range = 'TestSheet1!A1:p10';
+        const range = 'TestSheet1!A1:P10';
 
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId,
@@ -35,7 +38,6 @@ export async function GET(request: NextRequest) {
 
         const processedData = [];
 
-
         // Loop through rows and send valid rows to SQS
         for (const row of dataRows) {
             const data = {
@@ -44,7 +46,7 @@ export async function GET(request: NextRequest) {
                 email: row[headers.indexOf('Email')],
             };
 
-            console.log("Data: ", data);
+            console.log('Data: ', data);
 
             // Ensure required fields are present
             if (data.company && data.contact && data.email) {
@@ -59,16 +61,16 @@ export async function GET(request: NextRequest) {
                 console.warn(`Skipping invalid row: ${JSON.stringify(row)}`);
             }
         }
-        
 
-        return NextResponse.json({
-            message: 'Data processing completed',
-            data: processedData,
-        }, { status: 200 });
-
-
+        return NextResponse.json(
+            {
+                message: 'Data processing completed',
+                data: processedData,
+            },
+            { status: 200 }
+        );
     } catch (error) {
         console.error('Error fetching Google Sheet:', error);
-        return NextResponse.json(error, { status: 500 });
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }
 }
