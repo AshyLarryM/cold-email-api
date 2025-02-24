@@ -2,6 +2,8 @@ import { google } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
 import { sendToQueue } from '@/lib/sqs/sendToQueue';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
     try {
         if (!process.env.GOOGLE_SERVICE_ACCOUNT) {
